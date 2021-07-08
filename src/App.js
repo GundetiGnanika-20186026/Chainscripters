@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+//import { Button, Checkbox, Form, Dropdown } from 'semantic-ui-react';
+import Select from 'react-select';
+import DetailView from "./DetailView.js";
+function App(){
+const choices = [
+  {
+    label: 'Get the Transcripts',
+    value: 'Get'
+  },
+  {
+    label: 'Upload the transcript',
+    value: 'Post'
+  } 
+]
 
-function App() {
+const [result,value] = useState(choices.label);
+const handleChange = e => 
+{
+  value(e.value);
+}
+
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <center>
+    <div style={{ width : '200px' }}>
+      <br></br>
+      <Select options = {choices} onChange = {handleChange}/>
+      <br></br>
+      <DetailView job = {result}/>
     </div>
+    </center>
   );
 }
 
