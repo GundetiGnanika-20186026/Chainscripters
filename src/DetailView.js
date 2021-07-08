@@ -54,12 +54,12 @@ class DetailView extends React.Component{
         console.log(this.state)
        if(this.props.job === "Post"){
            let body = "caseId=" + this.state.caseId +",previousBlockId="+ this.state.previousBlockId + ",agentConsent=" + this.state.agentConsent + ",visitorConsent=" + this.state.visitorConsent + ",transcriptJson=" + this.state.transcriptJson 
-           let postUrl = 'https://localhost:8080/'+this.state.visitorId+'/chainscript'
-           axios.post(postUrl, body)
+           let postUrl = 'http://localhost:8080/'+this.state.visitorId+'/chainscript'
+           axios.post(postUrl, this.state)
            .then(response =>{
-               console.log(response)
+               console.log(response.data)
                this.setState({
-                currentBlockId : response
+                currentBlockId : response.data
                })
            })
            .catch(error =>{
@@ -67,12 +67,13 @@ class DetailView extends React.Component{
            })
        }
        else{
-           let getUrl = 'https://localhost:8080/'+this.state.visitorId+'/'+this.state.previousBlockId+'/chainscripts'
-           axios.get(getUrl)
+        //    let getUrl = 'http://localhost:8080/'+this.state.visitorId+'/'+this.state.previousBlockId+'/chainscripts'
+            let getUrl = 'http://localhost:8080/'+this.state.visitorId+'/'+this.state.currentBlockId+'/chainscripts'   
+            axios.get(getUrl)
            .then(response=>{
-               console.log(response)
+               console.log(response.data)
                this.setState({
-                transcriptJson : response
+                transcriptJson : response.data
             })
            })
            .catch(error=>{
@@ -85,7 +86,7 @@ class DetailView extends React.Component{
 
     render(){
         let formItems = [];
-        let getItems;
+        let getItems = [];
         let job = this.props.job;
         if(job === "Post"){
             formItems.push(
@@ -101,12 +102,18 @@ class DetailView extends React.Component{
                 <Form.Input label='Consent to share transcript by agent' placeholder='Agent Consent' value={this.state.agentConsent} onChange = {this.handleAgentConsentChange}/>
             );
             formItems.push(
-                <Form.TextArea label='Transcript Json' placeholder='Add the transcript JSON...' value={this.state.transcriptJson} onChange = {this.handleTranscriptChange} />
+                <Form.TextArea label='Transcript' placeholder='Add the transcript..' value={this.state.transcriptJson} onChange = {this.handleTranscriptChange} />
             );
             getItems = <p>{this.state.currentBlockId}</p>
         }
         else if(job === "Get"){
-            getItems = <p>{this.state.transcriptJson}</p>
+            if(this.state.transcriptJson !== "" && this.state.transcriptJson !== null ){
+               this.state.transcriptJson.forEach(element => {
+                    getItems.push(<p>{element}</p>);
+                });
+
+            }
+           
             formItems.push(
                 <Form.Input label='Block Id' placeholder='Block Id' value={this.state.currentBlockId} onChange = {this.handleBlockIdChange}/>
             );
